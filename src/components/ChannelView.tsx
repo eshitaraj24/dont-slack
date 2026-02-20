@@ -2,15 +2,27 @@ import { Hash, Search, Users, Bookmark, ChevronDown, Plus, Smile, Paperclip, Sen
 import { messages, channels } from '@/data/mockData';
 import CatchUpPill from './CatchUpPill';
 import { useRef, useEffect, useState } from 'react';
+import slackScreenshot from '@/assets/slack-screenshot.jpg';
 
 interface ChannelViewProps {
   channelId: string;
   onOpenCatchUp: () => void;
   showCatchUp: boolean;
   highlightedMessageId: string | null;
+  composerText: string;
+  onComposerChange: (text: string) => void;
 }
 
-const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessageId }: ChannelViewProps) => {
+const SlackAvatar = ({ initials, color, size = 36 }: { initials: string; color: string; size?: number }) => (
+  <div
+    className="rounded-lg flex items-center justify-center shrink-0 font-bold text-white ring-1 ring-black/20"
+    style={{ width: size, height: size, backgroundColor: color, fontSize: size * 0.36 }}
+  >
+    {initials}
+  </div>
+);
+
+const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessageId, composerText, onComposerChange }: ChannelViewProps) => {
   const channel = channels.find(c => c.id === channelId);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [flashId, setFlashId] = useState<string | null>(null);
@@ -25,89 +37,101 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
   }, [highlightedMessageId]);
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 h-full bg-background">
-      {/* Channel header */}
-      <div className="h-[49px] px-4 flex items-center justify-between border-b border-border shrink-0">
-        <div className="flex items-center gap-2">
-          <Hash className="w-4 h-4 text-foreground-secondary" />
-          <span className="font-bold text-[17px] text-foreground">{channel?.name || 'channel'}</span>
-          <ChevronDown className="w-3.5 h-3.5 text-foreground-secondary" />
-        </div>
-        <div className="flex items-center gap-1">
-          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
-            <Users className="w-4 h-4" />
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
-            <Bookmark className="w-4 h-4" />
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
-            <Search className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+    <div className="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
+      {/* Slack screenshot as base layer */}
+      <img
+        src={slackScreenshot}
+        alt="Slack channel background"
+        className="absolute inset-0 w-full h-full object-cover object-top opacity-[0.07] pointer-events-none select-none"
+      />
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-5 py-3 relative">
-        {/* Catch-Up Pill — shown when channel has many unreads */}
-        {channel && channel.unread >= 25 && !showCatchUp && (
-          <CatchUpPill unreadCount={channel.unread} onClick={onOpenCatchUp} />
-        )}
-
-        {/* Unread divider */}
-        {channel && channel.unread > 0 && (
-          <div className="flex items-center gap-3 my-4">
-            <div className="flex-1 h-px bg-destructive/30" />
-            <span className="text-destructive text-[12px] font-semibold">New since yesterday</span>
-            <div className="flex-1 h-px bg-destructive/30" />
+      {/* Actual channel UI on top */}
+      <div className="relative flex flex-col h-full bg-background/95">
+        {/* Channel header */}
+        <div className="h-[49px] px-4 flex items-center justify-between border-b border-border shrink-0">
+          <div className="flex items-center gap-2">
+            <Hash className="w-4 h-4 text-foreground-secondary" />
+            <span className="font-bold text-[17px] text-foreground">{channel?.name || 'channel'}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-foreground-secondary" />
           </div>
-        )}
-
-        {/* Messages */}
-        <div className="space-y-1">
-          {messages.map(msg => (
-            <div
-              key={msg.id}
-              ref={el => { messageRefs.current[msg.id] = el; }}
-              className={`flex gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-muted/50 group ${
-                flashId === msg.id ? 'message-highlight' : ''
-              }`}
-            >
-              <div className="w-9 h-9 rounded-lg bg-slack-sidebar-accent text-slack-sidebar-active text-[13px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                {msg.avatar}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-bold text-[15px] text-foreground">{msg.user}</span>
-                  <span className="text-[12px] text-foreground-secondary">{msg.time}</span>
-                </div>
-                <p className="text-[15px] text-foreground leading-relaxed">{msg.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Message input */}
-      <div className="px-5 pb-4 pt-1 shrink-0">
-        <div className="border border-border rounded-lg p-2">
-          <div className="h-9 flex items-center px-3 text-foreground-secondary text-[14px]">
-            Message #{channel?.name || 'channel'}
-          </div>
-          <div className="flex items-center justify-between px-2 pt-1">
-            <div className="flex items-center gap-1">
-              <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
-                <Plus className="w-4 h-4" />
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
-                <Smile className="w-4 h-4" />
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
-                <Paperclip className="w-4 h-4" />
-              </button>
-            </div>
-            <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
-              <Send className="w-4 h-4" />
+          <div className="flex items-center gap-1">
+            <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
+              <Users className="w-4 h-4" />
             </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
+              <Bookmark className="w-4 h-4" />
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
+              <Search className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Messages area */}
+        <div className="flex-1 overflow-y-auto px-5 py-3 relative">
+          {/* Catch-Up Pill */}
+          {channel && channel.unread >= 25 && !showCatchUp && (
+            <CatchUpPill unreadCount={channel.unread} onClick={onOpenCatchUp} />
+          )}
+
+          {/* Unread divider */}
+          {channel && channel.unread > 0 && (
+            <div className="flex items-center gap-3 my-4">
+              <div className="flex-1 h-px bg-destructive/30" />
+              <span className="text-destructive text-[12px] font-semibold">New since yesterday</span>
+              <div className="flex-1 h-px bg-destructive/30" />
+            </div>
+          )}
+
+          {/* Messages */}
+          <div className="space-y-1">
+            {messages.map(msg => (
+              <div
+                key={msg.id}
+                ref={el => { messageRefs.current[msg.id] = el; }}
+                className={`flex gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-muted/50 group ${
+                  flashId === msg.id ? 'message-highlight' : ''
+                }`}
+              >
+                <SlackAvatar initials={msg.avatar} color={msg.avatarColor} size={36} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-bold text-[15px] text-foreground">{msg.user}</span>
+                    <span className="text-[12px] text-foreground-secondary">{msg.time}</span>
+                  </div>
+                  <p className="text-[15px] text-foreground leading-relaxed">{msg.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Message input */}
+        <div className="px-5 pb-4 pt-1 shrink-0">
+          <div className="border border-border rounded-lg bg-card">
+            <textarea
+              value={composerText}
+              onChange={e => onComposerChange(e.target.value)}
+              placeholder={`Message #${channel?.name || 'channel'}`}
+              rows={composerText ? 2 : 1}
+              className="w-full px-4 py-2.5 text-[14px] text-foreground bg-transparent resize-none outline-none placeholder:text-foreground-secondary leading-relaxed"
+            />
+            <div className="flex items-center justify-between px-2 pb-2">
+              <div className="flex items-center gap-1">
+                <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
+                  <Plus className="w-4 h-4" />
+                </button>
+                <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
+                  <Smile className="w-4 h-4" />
+                </button>
+                <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-foreground-secondary transition-colors">
+                  <Paperclip className="w-4 h-4" />
+                </button>
+              </div>
+              <button className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${composerText ? 'bg-primary text-primary-foreground' : 'text-foreground-secondary hover:bg-muted'}`}>
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

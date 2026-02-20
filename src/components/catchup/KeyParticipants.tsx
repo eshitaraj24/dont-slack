@@ -4,6 +4,15 @@ interface KeyParticipantsProps {
   participants: Participant[];
 }
 
+const SlackAvatar = ({ initials, color, size = 28 }: { initials: string; color: string; size?: number }) => (
+  <div
+    className="rounded-full flex items-center justify-center shrink-0 font-bold text-white ring-2 ring-card"
+    style={{ width: size, height: size, backgroundColor: color, fontSize: size * 0.36 }}
+  >
+    {initials}
+  </div>
+);
+
 const KeyParticipants = ({ participants }: KeyParticipantsProps) => {
   return (
     <div className="px-4 py-3 border-t border-border-light">
@@ -14,9 +23,7 @@ const KeyParticipants = ({ participants }: KeyParticipantsProps) => {
       <div className="flex flex-wrap gap-3">
         {participants.map(p => (
           <div key={p.name} className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-slack-sidebar-accent text-slack-sidebar-active text-[11px] font-bold flex items-center justify-center">
-              {p.avatar}
-            </div>
+            <SlackAvatar initials={p.avatar} color={p.avatarColor} size={28} />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[12px] font-medium text-foreground">{p.name}</span>

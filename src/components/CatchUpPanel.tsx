@@ -17,9 +17,10 @@ import type { ActionItem } from '@/data/mockData';
 interface CatchUpPanelProps {
   onClose: () => void;
   onJumpToMessage: (messageId: string) => void;
+  onInsertReply: (text: string) => void;
 }
 
-const CatchUpPanel = ({ onClose, onJumpToMessage }: CatchUpPanelProps) => {
+const CatchUpPanel = ({ onClose, onJumpToMessage, onInsertReply }: CatchUpPanelProps) => {
   const [showConfidence, setShowConfidence] = useState(false);
   const [actions, setActions] = useState<ActionItem[]>(initialActionItems);
   const totalMessages = 47;
@@ -31,7 +32,7 @@ const CatchUpPanel = ({ onClose, onJumpToMessage }: CatchUpPanelProps) => {
   };
 
   return (
-    <div className="w-[400px] border-l border-border bg-background h-full flex flex-col panel-slide-in shrink-0">
+    <div className="w-[400px] border-l border-border bg-card h-full flex flex-col panel-slide-in shrink-0">
       {/* Header */}
       <div className="h-[49px] px-4 flex items-center justify-between border-b border-border shrink-0">
         <h2 className="text-[15px] font-bold text-foreground truncate">
@@ -61,16 +62,17 @@ const CatchUpPanel = ({ onClose, onJumpToMessage }: CatchUpPanelProps) => {
       <div className="flex-1 overflow-y-auto">
         <div className="py-3 space-y-1">
           {/* Priority 1: Personalized Impact */}
-          <PersonalizedImpact items={impactItems} onJumpToMessage={onJumpToMessage} />
+          <PersonalizedImpact items={impactItems} onJumpToMessage={onJumpToMessage} onInsertReply={onInsertReply} />
 
           {/* Priority 2: Key Decisions */}
-          <KeyDecisions decisions={decisions} onJumpToMessage={onJumpToMessage} />
+          <KeyDecisions decisions={decisions} onJumpToMessage={onJumpToMessage} onInsertReply={onInsertReply} />
 
           {/* Priority 3: Action Items */}
           <ActionItems
             items={actions}
             onConfirm={handleConfirmAction}
             onJumpToMessage={onJumpToMessage}
+            onInsertReply={onInsertReply}
           />
 
           {/* Priority 4: Summary */}

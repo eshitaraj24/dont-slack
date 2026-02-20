@@ -4,14 +4,18 @@ import ChannelView from '@/components/ChannelView';
 import CatchUpPanel from '@/components/CatchUpPanel';
 
 const Index = () => {
-  const [activeChannel, setActiveChannel] = useState('2'); // product-launch (47 unread)
+  const [activeChannel, setActiveChannel] = useState('2');
   const [showCatchUp, setShowCatchUp] = useState(false);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+  const [composerText, setComposerText] = useState('');
 
   const handleJumpToMessage = (messageId: string) => {
     setHighlightedMessageId(messageId);
-    // Reset after animation
     setTimeout(() => setHighlightedMessageId(null), 2500);
+  };
+
+  const handleInsertReply = (text: string) => {
+    setComposerText(text);
   };
 
   return (
@@ -22,11 +26,14 @@ const Index = () => {
         onOpenCatchUp={() => setShowCatchUp(true)}
         showCatchUp={showCatchUp}
         highlightedMessageId={highlightedMessageId}
+        composerText={composerText}
+        onComposerChange={setComposerText}
       />
       {showCatchUp && (
         <CatchUpPanel
           onClose={() => setShowCatchUp(false)}
           onJumpToMessage={handleJumpToMessage}
+          onInsertReply={handleInsertReply}
         />
       )}
     </div>
@@ -34,3 +41,4 @@ const Index = () => {
 };
 
 export default Index;
+
