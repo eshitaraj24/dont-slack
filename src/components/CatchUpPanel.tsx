@@ -1,28 +1,38 @@
-import { X, RefreshCw, ChevronDown, ChevronRight } from 'lucide-react';
+import { X, RefreshCw, Hash, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import PersonalizedImpact from './catchup/PersonalizedImpact';
 import KeyDecisions from './catchup/KeyDecisions';
 import ActionItems from './catchup/ActionItems';
 import ConversationSummary from './catchup/ConversationSummary';
-import KeyParticipants from './catchup/KeyParticipants';
 import {
   impactItems,
   decisions,
   actionItems as initialActionItems,
   conversationSummary,
-  participants,
+  globalChannelSummaries,
 } from '@/data/mockData';
 import type { ActionItem } from '@/data/mockData';
 
 interface CatchUpPanelProps {
   onClose: () => void;
   onJumpToMessage: (messageId: string) => void;
+  isGlobal?: boolean;
+  channelName?: string;
 }
 
-const CatchUpPanel = ({ onClose, onJumpToMessage }: CatchUpPanelProps) => {
-  const [showConfidence, setShowConfidence] = useState(false);
+type TabId = 'impact' | 'decisions' | 'actions' | 'summary';
+
+const tabs: { id: TabId; label: string }[] = [
+  { id: 'impact', label: 'For You' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'actions', label: 'Action Items' },
+  { id: 'summary', label: 'Summary' },
+];
+
+const CatchUpPanel = ({ onClose, onJumpToMessage, isGlobal = false, channelName }: CatchUpPanelProps) => {
+  const [activeTab, setActiveTab] = useState<TabId>('impact');
+  const [viewMode, setViewMode] = useState<'channel' | 'workspace'>(isGlobal ? 'workspace' : 'channel');
   const [actions, setActions] = useState<ActionItem[]>(initialActionItems);
-  const totalMessages = 47;
 
   const handleConfirmAction = (actionId: string) => {
     setActions(prev =>
@@ -30,75 +40,160 @@ const CatchUpPanel = ({ onClose, onJumpToMessage }: CatchUpPanelProps) => {
     );
   };
 
+  const totalMessages = 47;
+  const keyUpdates = impactItems.length;
+
   return (
-    <div className="w-[400px] border-l border-border bg-background h-full flex flex-col panel-slide-in shrink-0">
+    <div className="w-[380px] border-l border-border bg-background h-full flex flex-col panel-slide-in shrink-0">
       {/* Header */}
       <div className="h-[49px] px-4 flex items-center justify-between border-b border-border shrink-0">
         <h2 className="text-[15px] font-bold text-foreground truncate">
-          Catch-Up Since Yesterday, 6:30 PM
+          Catch-Up · Since Yesterday 6:30 PM
         </h2>
-        <div className="flex items-center gap-1">
-          <button className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
+        <div className="flex items-center gap-0.5">
+          <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted transition-colors text-foreground-secondary">
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary"
+            className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted transition-colors text-foreground-secondary"
           >
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Activity indicator */}
-      <div className="px-4 py-2.5 border-b border-border-light bg-card-elevated">
-        <p className="text-[12px] text-foreground-secondary">
-          <span className="font-semibold text-foreground">{impactItems.length} key updates</span> out of {totalMessages} messages
-        </p>
+      {/* Activity + scope toggle */}
+      <div className="px-4 py-2 border-b border-border flex items-center justify-between">
+        <span className="text-[12px] text-foreground-secondary">
+          {viewMode === 'workspace'
+            ? `8 key updates · 3 channels`
+            : `${keyUpdates} key updates · ${totalMessages} messages`}
+        </span>
+        <div className="flex items-center bg-muted rounded p-0.5">
+          <button
+            onClick={() => setViewMode('channel')}
+            className={`text-[11px] px-2 py-0.5 rounded transition-colors ${
+              viewMode === 'channel' ? 'bg-background text-foreground shadow-sm' : 'text-foreground-secondary'
+            }`}
+          >
+            Channel
+          </button>
+          <button
+            onClick={() => setViewMode('workspace')}
+            className={`text-[11px] px-2 py-0.5 rounded transition-colors ${
+              viewMode === 'workspace' ? 'bg-background text-foreground shadow-sm' : 'text-foreground-secondary'
+            }`}
+          >
+            Workspace
+          </button>
+        </div>
       </div>
 
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="py-3 space-y-1">
-          {/* Priority 1: Personalized Impact */}
-          <PersonalizedImpact items={impactItems} onJumpToMessage={onJumpToMessage} />
+      {viewMode === 'workspace' ? (
+        /* Global workspace view */
+        <div className="flex-1 overflow-y-auto">
+          {/* Still show tabs for global */}
+          <div className="px-4 pt-2 pb-0 border-b border-border flex gap-0.5">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`text-[12px] px-2.5 pb-2 transition-colors relative ${
+                  activeTab === tab.id
+                    ? 'text-primary font-medium'
+                    : 'text-foreground-secondary hover:text-foreground'
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
 
-          {/* Priority 2: Key Decisions */}
-          <KeyDecisions decisions={decisions} onJumpToMessage={onJumpToMessage} />
-
-          {/* Priority 3: Action Items */}
-          <ActionItems
-            items={actions}
-            onConfirm={handleConfirmAction}
-            onJumpToMessage={onJumpToMessage}
-          />
-
-          {/* Priority 4: Summary */}
-          <ConversationSummary summary={conversationSummary} />
-
-          {/* Priority 5: Key Participants */}
-          <KeyParticipants participants={participants} />
-        </div>
-
-        {/* Confidence toggle */}
-        <div className="px-4 pb-4">
-          <button
-            onClick={() => setShowConfidence(!showConfidence)}
-            className="flex items-center gap-1.5 text-[12px] text-foreground-secondary hover:text-foreground transition-colors"
-          >
-            {showConfidence ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-            Confidence levels
-          </button>
-          {showConfidence && (
-            <div className="mt-2 p-3 bg-card-elevated rounded-md text-[12px] text-foreground-secondary space-y-1.5">
-              <div className="flex justify-between"><span>Personalized Impact</span><span className="text-decision-green font-medium">High</span></div>
-              <div className="flex justify-between"><span>Decisions</span><span className="text-decision-green font-medium">High</span></div>
-              <div className="flex justify-between"><span>Action Items</span><span className="text-action-amber font-medium">Medium</span></div>
-              <div className="flex justify-between"><span>Summary</span><span className="text-decision-green font-medium">High</span></div>
+          {activeTab === 'impact' && (
+            <div className="py-2">
+              <PersonalizedImpact items={impactItems} onJumpToMessage={onJumpToMessage} />
+              {/* Channel groups */}
+              <div className="mt-3 px-4">
+                <p className="text-[11px] font-medium text-foreground-secondary uppercase tracking-wider mb-2">By channel</p>
+                {globalChannelSummaries.map(ch => (
+                  <button
+                    key={ch.channelId}
+                    className="w-full flex items-center gap-2.5 py-2 border-b border-border-light hover:bg-muted/50 transition-colors group text-left"
+                  >
+                    <Hash className="w-3.5 h-3.5 text-foreground-secondary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[13px] font-medium text-foreground">{ch.channelName}</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[11px] text-foreground-secondary">{ch.decisionsCount} decisions</span>
+                        <span className="text-[11px] text-foreground-secondary">· {ch.actionItemsCount} actions</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-foreground-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {activeTab === 'decisions' && (
+            <div className="py-2">
+              <KeyDecisions decisions={decisions} onJumpToMessage={onJumpToMessage} />
+            </div>
+          )}
+          {activeTab === 'actions' && (
+            <div className="py-2">
+              <ActionItems items={actions} onConfirm={handleConfirmAction} onJumpToMessage={onJumpToMessage} />
+            </div>
+          )}
+          {activeTab === 'summary' && (
+            <div className="py-2">
+              <ConversationSummary summary={conversationSummary} />
             </div>
           )}
         </div>
-      </div>
+      ) : (
+        /* Channel-level view */
+        <>
+          {/* Tabs */}
+          <div className="px-4 pt-2 pb-0 border-b border-border flex gap-0.5">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`text-[12px] px-2.5 pb-2 transition-colors relative ${
+                  activeTab === tab.id
+                    ? 'text-primary font-medium'
+                    : 'text-foreground-secondary hover:text-foreground'
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab content */}
+          <div className="flex-1 overflow-y-auto">
+            {activeTab === 'impact' && (
+              <PersonalizedImpact items={impactItems} onJumpToMessage={onJumpToMessage} />
+            )}
+            {activeTab === 'decisions' && (
+              <KeyDecisions decisions={decisions} onJumpToMessage={onJumpToMessage} />
+            )}
+            {activeTab === 'actions' && (
+              <ActionItems items={actions} onConfirm={handleConfirmAction} onJumpToMessage={onJumpToMessage} />
+            )}
+            {activeTab === 'summary' && (
+              <ConversationSummary summary={conversationSummary} />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -4,29 +4,45 @@ import ChannelView from '@/components/ChannelView';
 import CatchUpPanel from '@/components/CatchUpPanel';
 
 const Index = () => {
-  const [activeChannel, setActiveChannel] = useState('2'); // product-launch (47 unread)
+  const [activeChannel, setActiveChannel] = useState('2');
   const [showCatchUp, setShowCatchUp] = useState(false);
+  const [isGlobalCatchUp, setIsGlobalCatchUp] = useState(false);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
 
   const handleJumpToMessage = (messageId: string) => {
     setHighlightedMessageId(messageId);
-    // Reset after animation
     setTimeout(() => setHighlightedMessageId(null), 2500);
+  };
+
+  const handleOpenGlobalCatchUp = () => {
+    setIsGlobalCatchUp(true);
+    setShowCatchUp(true);
+  };
+
+  const handleOpenChannelCatchUp = () => {
+    setIsGlobalCatchUp(false);
+    setShowCatchUp(true);
   };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
-      <SlackSidebar activeChannel={activeChannel} onChannelSelect={(id) => { setActiveChannel(id); setShowCatchUp(false); }} />
+      <SlackSidebar
+        activeChannel={activeChannel}
+        onChannelSelect={(id) => { setActiveChannel(id); setShowCatchUp(false); setIsGlobalCatchUp(false); }}
+        onOpenGlobalCatchUp={handleOpenGlobalCatchUp}
+        isGlobalCatchUpActive={isGlobalCatchUp && showCatchUp}
+      />
       <ChannelView
         channelId={activeChannel}
-        onOpenCatchUp={() => setShowCatchUp(true)}
+        onOpenCatchUp={handleOpenChannelCatchUp}
         showCatchUp={showCatchUp}
         highlightedMessageId={highlightedMessageId}
       />
       {showCatchUp && (
         <CatchUpPanel
-          onClose={() => setShowCatchUp(false)}
+          onClose={() => { setShowCatchUp(false); setIsGlobalCatchUp(false); }}
           onJumpToMessage={handleJumpToMessage}
+          isGlobal={isGlobalCatchUp}
         />
       )}
     </div>
