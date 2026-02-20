@@ -1,6 +1,5 @@
-import { Hash, Search, Users, Bookmark, ChevronDown, Plus, Smile, Paperclip, Send } from 'lucide-react';
-import { messages, channels } from '@/data/mockData';
-import CatchUpPill from './CatchUpPill';
+import { Hash, Search, Users, Bookmark, ChevronDown, Plus, Smile, Paperclip, Send, Sparkles } from 'lucide-react';
+import { messages, channels, participants } from '@/data/mockData';
 import { useRef, useEffect, useState } from 'react';
 import slackScreenshot from '@/assets/slack-screenshot.jpg';
 
@@ -21,6 +20,33 @@ const SlackAvatar = ({ initials, color, size = 36 }: { initials: string; color: 
     {initials}
   </div>
 );
+
+const AvatarStack = () => {
+  const stackParticipants = participants.slice(0, 4);
+  return (
+    <div className="flex items-center -space-x-1.5">
+      {stackParticipants.map((p, i) => (
+        <div
+          key={p.name}
+          title={p.name}
+          className="rounded-full flex items-center justify-center font-bold text-white ring-2 ring-[#1A1D21] shrink-0"
+          style={{
+            width: 22,
+            height: 22,
+            backgroundColor: p.avatarColor,
+            fontSize: 8,
+            zIndex: stackParticipants.length - i,
+          }}
+        >
+          {p.avatar}
+        </div>
+      ))}
+      <span className="ml-2 text-[12px] text-foreground-secondary font-medium pl-0.5">
+        {participants.length}
+      </span>
+    </div>
+  );
+};
 
 const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessageId, composerText, onComposerChange }: ChannelViewProps) => {
   const channel = channels.find(c => c.id === channelId);
@@ -55,14 +81,35 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
             <ChevronDown className="w-3.5 h-3.5 text-foreground-secondary" />
           </div>
           <div className="flex items-center gap-1">
-            <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
-              <Users className="w-4 h-4" />
-            </button>
+            {/* Avatar stack + People icon */}
+            <div className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-muted transition-colors cursor-pointer">
+              <AvatarStack />
+              <Users className="w-4 h-4 text-foreground-secondary" />
+            </div>
+            <div className="w-px h-4 bg-border mx-0.5" />
             <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
               <Bookmark className="w-4 h-4" />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
               <Search className="w-4 h-4" />
+            </button>
+            <div className="w-px h-4 bg-border mx-0.5" />
+            {/* Catch-Up toolbar button */}
+            <button
+              onClick={onOpenCatchUp}
+              className={`flex items-center gap-1.5 px-2.5 h-8 rounded-md text-[13px] font-medium transition-colors ${
+                showCatchUp
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-foreground-secondary hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Catch Up</span>
+              {(channel?.unread ?? 0) > 0 && (
+                <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${showCatchUp ? 'bg-primary/30 text-primary' : 'bg-muted text-foreground-secondary'}`}>
+                  {channel?.unread}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -103,12 +150,6 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
 
         {/* Message input */}
         <div className="px-5 pb-4 pt-1 shrink-0 relative">
-          {/* Sticky Catch-Up pill above composer */}
-          {!showCatchUp && (
-            <div className="absolute -top-10 right-5 z-10">
-              <CatchUpPill unreadCount={channel?.unread || 0} onClick={onOpenCatchUp} />
-            </div>
-          )}
           <div className="border border-border rounded-lg bg-card">
             <textarea
               value={composerText}
