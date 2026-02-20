@@ -69,11 +69,6 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
 
         {/* Messages area */}
         <div className="flex-1 overflow-y-auto px-5 py-3 relative">
-          {/* Catch-Up Pill */}
-          {channel && channel.unread >= 25 && !showCatchUp && (
-            <CatchUpPill unreadCount={channel.unread} onClick={onOpenCatchUp} />
-          )}
-
           {/* Unread divider */}
           {channel && channel.unread > 0 && (
             <div className="flex items-center gap-3 my-4">
@@ -107,7 +102,13 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
         </div>
 
         {/* Message input */}
-        <div className="px-5 pb-4 pt-1 shrink-0">
+        <div className="px-5 pb-4 pt-1 shrink-0 relative">
+          {/* Sticky Catch-Up pill above composer */}
+          {!showCatchUp && (
+            <div className="absolute -top-10 right-5 z-10">
+              <CatchUpPill unreadCount={channel?.unread || 0} onClick={onOpenCatchUp} />
+            </div>
+          )}
           <div className="border border-border rounded-lg bg-card">
             <textarea
               value={composerText}
