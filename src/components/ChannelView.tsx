@@ -1,5 +1,6 @@
-import { Hash, Search, Users, Bookmark, ChevronDown, Plus, Smile, Paperclip, Send, Sparkles } from 'lucide-react';
+import { Hash, Search, Users, Bookmark, ChevronDown, Plus, Smile, Paperclip, Send, Sparkles, FileText, MessageSquare } from 'lucide-react';
 import { messages, channels, participants } from '@/data/mockData';
+import type { SlackMessage } from '@/data/mockData';
 import { useRef, useEffect, useState } from 'react';
 import slackScreenshot from '@/assets/slack-screenshot.jpg';
 
@@ -48,6 +49,77 @@ const AvatarStack = () => {
   );
 };
 
+// First "unread" message ID — divider renders just before this
+const UNREAD_START_ID = 'msg-28';
+
+const MessageRow = ({ msg, flashId }: { msg: SlackMessage; flashId: string | null }) => (
+  <div className={`flex gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-muted/50 group ${flashId === msg.id ? 'message-highlight' : ''}`}>
+    <SlackAvatar initials={msg.avatar} color={msg.avatarColor} size={36} />
+    <div className="min-w-0 flex-1">
+      <div className="flex items-baseline gap-2">
+        <span className="font-bold text-[15px] text-foreground">{msg.user}</span>
+        <span className="text-[12px] text-foreground-secondary">{msg.time}</span>
+      </div>
+      <p className="text-[15px] text-foreground leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+
+      {/* Code block */}
+      {msg.codeBlock && (
+        <div className="mt-2 rounded-md overflow-hidden border border-border">
+          <div className="px-3 py-1.5 bg-[#1A1D21] border-b border-border">
+            <span className="text-[11px] text-foreground-secondary font-mono">{msg.codeLanguage || 'code'}</span>
+          </div>
+          <pre className="bg-[#111316] px-3 py-2.5 text-[12px] font-mono text-[#ABB2BF] overflow-x-auto leading-relaxed whitespace-pre">
+            {msg.codeBlock}
+          </pre>
+        </div>
+      )}
+
+      {/* File preview */}
+      {msg.filePreview && (
+        <div className="mt-2 flex items-center gap-2.5 px-3 py-2 rounded-md border border-border bg-card-elevated w-fit max-w-xs cursor-pointer hover:border-border-focus transition-colors">
+          <FileText className="w-5 h-5 text-foreground-secondary shrink-0" />
+          <div className="min-w-0">
+            <p className="text-[13px] text-foreground font-medium truncate">{msg.filePreview.name}</p>
+            <p className="text-[11px] text-foreground-secondary">{msg.filePreview.type} · {msg.filePreview.size}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Reactions */}
+      {msg.reactions && msg.reactions.length > 0 && (
+        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+          {msg.reactions.map((r, i) => (
+            <button
+              key={i}
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted border border-border text-[12px] hover:border-border-focus transition-colors"
+            >
+              <span>{r.emoji}</span>
+              <span className="text-foreground-secondary font-medium">{r.count}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Thread replies */}
+      {msg.thread && (
+        <div className="flex items-center gap-2 mt-2 cursor-pointer group/thread">
+          <div
+            className="rounded-full flex items-center justify-center font-bold text-white shrink-0"
+            style={{ width: 18, height: 18, backgroundColor: msg.thread.lastUserColor, fontSize: 7 }}
+          >
+            {msg.thread.lastUserAvatar}
+          </div>
+          <span className="text-[12px] text-primary font-semibold group-hover/thread:underline">
+            {msg.thread.count} {msg.thread.count === 1 ? 'reply' : 'replies'}
+          </span>
+          <span className="text-[12px] text-foreground-secondary">Last reply {msg.thread.lastTime}</span>
+          <MessageSquare className="w-3.5 h-3.5 text-foreground-secondary opacity-0 group-hover/thread:opacity-100 transition-opacity" />
+        </div>
+      )}
+    </div>
+  </div>
+);
+
 const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessageId, composerText, onComposerChange }: ChannelViewProps) => {
   const channel = channels.find(c => c.id === channelId);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -61,6 +133,8 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
       return () => clearTimeout(timer);
     }
   }, [highlightedMessageId]);
+
+  const unreadIndex = messages.findIndex(m => m.id === UNREAD_START_ID);
 
   return (
     <div className="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
@@ -115,33 +189,20 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
 
         {/* Messages area */}
         <div className="flex-1 overflow-y-auto px-5 py-3 relative">
-          {/* Unread divider */}
-          {channel && channel.unread > 0 && (
-            <div className="flex items-center gap-3 my-4">
-              <div className="flex-1 h-px bg-destructive/30" />
-              <span className="text-destructive text-[12px] font-semibold">New since yesterday</span>
-              <div className="flex-1 h-px bg-destructive/30" />
-            </div>
-          )}
-
-          {/* Messages */}
           <div className="space-y-1">
-            {messages.map(msg => (
-              <div
-                key={msg.id}
-                ref={el => { messageRefs.current[msg.id] = el; }}
-                className={`flex gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-muted/50 group ${
-                  flashId === msg.id ? 'message-highlight' : ''
-                }`}
-              >
-                <SlackAvatar initials={msg.avatar} color={msg.avatarColor} size={36} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-bold text-[15px] text-foreground">{msg.user}</span>
-                    <span className="text-[12px] text-foreground-secondary">{msg.time}</span>
+            {messages.map((msg, idx) => (
+              <div key={msg.id} ref={el => { messageRefs.current[msg.id] = el; }}>
+                {/* Unread divider */}
+                {idx === unreadIndex && (
+                  <div className="flex items-center gap-3 my-4">
+                    <div className="flex-1 h-px bg-destructive/40" />
+                    <span className="text-destructive text-[12px] font-semibold whitespace-nowrap">
+                      {channel?.unread ?? 0} new messages
+                    </span>
+                    <div className="flex-1 h-px bg-destructive/40" />
                   </div>
-                  <p className="text-[15px] text-foreground leading-relaxed">{msg.text}</p>
-                </div>
+                )}
+                <MessageRow msg={msg} flashId={flashId} />
               </div>
             ))}
           </div>
