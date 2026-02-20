@@ -2,85 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Slack-native Design System — Catch-Up Mode */
+/* Slack Dark Mode Design System — Catch-Up Mode */
 /* All colors in HSL */
 
 @layer base {
   :root {
-    /* Slack Aubergine Sidebar */
-    --sidebar-bg: 289 55% 19%;
-    --sidebar-bg-hover: 289 45% 24%;
-    --sidebar-text: 300 10% 80%;
+    /* Slack Dark Sidebar — aubergine dark */
+    --sidebar-bg: 300 62% 13%;
+    --sidebar-bg-hover: 300 40% 18%;
+    --sidebar-text: 210 8% 70%;
     --sidebar-text-active: 0 0% 100%;
-    --sidebar-accent: 289 40% 30%;
+    --sidebar-accent: 300 35% 20%;
     --sidebar-badge: 0 72% 51%;
 
-    /* Content Area */
-    --background: 0 0% 100%;
-    --foreground: 300 3% 11%;
-    --foreground-secondary: 300 2% 38%;
+    /* Content Area — Slack Dark #1A1D21 */
+    --background: 220 8% 11%;
+    --foreground: 210 5% 91%;
+    --foreground-secondary: 213 7% 60%;
 
-    /* Cards & Surfaces */
-    --card: 0 0% 100%;
-    --card-foreground: 300 3% 11%;
-    --card-elevated: 0 0% 98%;
+    /* Cards & Surfaces — #222529 */
+    --card: 220 7% 14%;
+    --card-foreground: 210 5% 91%;
+    --card-elevated: 220 6% 16%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 300 3% 11%;
+    --popover: 220 7% 14%;
+    --popover-foreground: 210 5% 91%;
 
-    /* Slack Blue — links, primary actions */
-    --primary: 209 83% 36%;
+    /* Slack Blue dark — #1D9BD1 */
+    --primary: 199 75% 47%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 300 3% 11%;
+    --secondary: 220 6% 18%;
+    --secondary-foreground: 210 5% 91%;
 
     /* Muted */
-    --muted: 0 0% 96%;
-    --muted-foreground: 300 2% 38%;
+    --muted: 220 6% 18%;
+    --muted-foreground: 213 7% 60%;
 
     /* Accent */
-    --accent: 0 0% 96%;
-    --accent-foreground: 300 3% 11%;
+    --accent: 220 6% 20%;
+    --accent-foreground: 210 5% 91%;
 
-    /* Slack section colors */
-    --impact-blue: 209 83% 36%;
-    --impact-blue-bg: 209 83% 96%;
-    --decision-green: 162 100% 24%;
-    --decision-green-bg: 162 50% 95%;
-    --action-amber: 30 80% 55%;
-    --action-amber-bg: 38 80% 95%;
-    --summary-purple: 270 50% 50%;
-    --summary-purple-bg: 270 40% 96%;
-    --participant-gray: 0 0% 60%;
-    --participant-gray-bg: 0 0% 97%;
+    /* Slack section colors — dark mode variants */
+    --impact-blue: 199 75% 47%;
+    --impact-blue-bg: 199 50% 13%;
+    --decision-green: 153 60% 41%;
+    --decision-green-bg: 153 40% 11%;
+    --action-amber: 32 78% 55%;
+    --action-amber-bg: 32 40% 12%;
+    --summary-purple: 270 55% 62%;
+    --summary-purple-bg: 270 30% 13%;
+    --participant-gray: 213 7% 60%;
+    --participant-gray-bg: 220 6% 16%;
 
-    /* Mention highlight */
-    --mention-bg: 45 100% 90%;
-    --mention-border: 45 90% 70%;
+    /* Mention highlight — dark */
+    --mention-bg: 45 60% 18%;
+    --mention-border: 45 70% 35%;
 
     /* Destructive */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders */
-    --border: 0 0% 87%;
-    --border-light: 0 0% 92%;
-    --input: 0 0% 87%;
-    --ring: 209 83% 36%;
+    /* Borders — #2B2F36 */
+    --border: 220 9% 19%;
+    --border-light: 220 8% 17%;
+    --input: 220 9% 19%;
+    --ring: 199 75% 47%;
 
     --radius: 0.375rem;
 
     /* Sidebar (shadcn) */
-    --sidebar-background: 289 55% 19%;
-    --sidebar-foreground: 300 10% 80%;
+    --sidebar-background: 300 62% 13%;
+    --sidebar-foreground: 210 8% 70%;
     --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 289 55% 19%;
-    --sidebar-accent: 289 40% 30%;
+    --sidebar-primary-foreground: 300 62% 13%;
+    --sidebar-accent: 300 35% 20%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 289 40% 25%;
-    --sidebar-ring: 209 83% 36%;
+    --sidebar-border: 300 30% 16%;
+    --sidebar-ring: 199 75% 47%;
   }
 }
 
