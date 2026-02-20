@@ -1,5 +1,4 @@
-import { Circle, CheckCircle2, Clock } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowRight, CheckCircle2, Circle, Clock } from 'lucide-react';
 import type { ActionItem } from '@/data/mockData';
 
 interface ActionItemsProps {
@@ -9,111 +8,65 @@ interface ActionItemsProps {
 }
 
 const ActionItems = ({ items, onConfirm, onJumpToMessage }: ActionItemsProps) => {
-  const [composerText, setComposerText] = useState<string | null>(null);
-
   if (items.length === 0) return null;
 
-  const handleSuggestedReply = (text: string) => {
-    setComposerText(text);
-  };
-
   return (
-    <div className="px-4 py-1">
-      {items.map((item, i) => (
-        <div
-          key={item.id}
-          className={`py-2.5 ${i < items.length - 1 ? 'border-b border-border-light' : ''}`}
-        >
-          <div className="flex gap-2.5">
-            <button
-              onClick={() => item.isAssignedToUser && !item.confirmed && onConfirm(item.id)}
-              className="shrink-0 mt-0.5"
-            >
+    <div className="px-4 py-3 border-t border-border-light">
+      <div className="flex items-center gap-2 mb-2.5">
+        <div className="w-1.5 h-1.5 rounded-full bg-action-amber" />
+        <h3 className="text-[13px] font-semibold text-foreground">Action Items</h3>
+      </div>
+      <div className="space-y-2">
+        {items.map(item => (
+          <div
+            key={item.id}
+            className={`p-2.5 rounded-md transition-colors ${
+              item.isAssignedToUser ? 'bg-action-amber-bg' : 'bg-card-elevated'
+            }`}
+          >
+            <div className="flex items-start gap-2.5">
               {item.confirmed ? (
-                <CheckCircle2 className="w-4 h-4 text-primary" />
+                <CheckCircle2 className="w-4 h-4 text-decision-green mt-0.5 shrink-0" />
               ) : (
-                <Circle className="w-4 h-4 text-foreground-secondary hover:text-foreground transition-colors" />
+                <Circle className="w-4 h-4 text-foreground-secondary mt-0.5 shrink-0" />
               )}
-            </button>
-            <div className="flex-1 min-w-0">
-              <button
-                onClick={() => onJumpToMessage(item.sourceMessageId)}
-                className="text-left w-full"
-              >
-                <p className={`text-[13px] leading-snug ${item.confirmed ? 'text-foreground-secondary line-through' : 'text-foreground'}`}>
-                  {item.task}
-                </p>
-              </button>
-              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                {item.isAssignedToUser && (
-                  <span className="text-[11px] text-foreground-secondary">Assigned to you</span>
-                )}
-                {!item.isAssignedToUser && (
-                  <span className="text-[11px] text-foreground-secondary">{item.assignedTo}</span>
-                )}
-                {item.deadline && (
-                  <span className="text-[11px] text-foreground-secondary flex items-center gap-0.5">
-                    <Clock className="w-3 h-3" />
-                    {item.deadline}
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] text-foreground leading-snug">{item.task}</p>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  <span className={`text-[11px] font-medium ${item.isAssignedToUser ? 'text-action-amber' : 'text-foreground-secondary'}`}>
+                    {item.assignedTo}
                   </span>
-                )}
-                {item.isAssignedToUser && !item.confirmed && (
-                  <>
-                    <span className="text-[11px] text-foreground-secondary">·</span>
+                  {item.deadline && (
+                    <span className="text-[11px] text-foreground-secondary flex items-center gap-0.5">
+                      <Clock className="w-3 h-3" />
+                      {item.deadline}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  {item.isAssignedToUser && !item.confirmed && (
                     <button
                       onClick={() => onConfirm(item.id)}
-                      className="text-[11px] text-primary hover:underline"
+                      className="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors px-2 py-0.5 rounded border border-primary/30 hover:border-primary/50"
                     >
-                      Confirm
+                      Confirm Ownership
                     </button>
-                  </>
-                )}
-                {item.confirmed && (
-                  <span className="text-[11px] text-primary">Confirmed</span>
-                )}
-              </div>
-
-              {/* Suggested replies */}
-              {item.isAssignedToUser && !item.confirmed && item.suggestedReplies && (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {item.suggestedReplies.map((reply, ri) => (
-                    <button
-                      key={ri}
-                      onClick={() => handleSuggestedReply(reply)}
-                      className="text-[11px] text-foreground-secondary border border-border rounded-full px-2.5 py-1 hover:bg-muted hover:text-foreground transition-colors"
-                    >
-                      {reply}
-                    </button>
-                  ))}
+                  )}
+                  {item.confirmed && (
+                    <span className="text-[11px] text-decision-green font-medium">Confirmed ✓</span>
+                  )}
+                  <button
+                    onClick={() => onJumpToMessage(item.sourceMessageId)}
+                    className="text-[11px] text-foreground-secondary hover:text-primary transition-colors flex items-center gap-0.5"
+                  >
+                    View source <ArrowRight className="w-3 h-3" />
+                  </button>
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-
-      {/* Mini composer preview */}
-      {composerText && (
-        <div className="mt-3 border border-border rounded-lg p-2.5">
-          <textarea
-            value={composerText}
-            onChange={e => setComposerText(e.target.value)}
-            className="w-full text-[13px] text-foreground bg-transparent resize-none outline-none leading-snug"
-            rows={2}
-          />
-          <div className="flex items-center justify-between mt-1.5">
-            <button
-              onClick={() => setComposerText(null)}
-              className="text-[11px] text-foreground-secondary hover:text-foreground"
-            >
-              Cancel
-            </button>
-            <button className="text-[11px] text-primary font-medium hover:underline">
-              Send
-            </button>
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 };

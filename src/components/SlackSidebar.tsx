@@ -1,14 +1,12 @@
-import { Hash, ChevronDown, MessageSquare, MoreHorizontal, Plus, Bell, Pencil, Zap } from 'lucide-react';
+import { Hash, ChevronDown, MessageSquare, MoreHorizontal, Plus, Search, Bell, Pencil } from 'lucide-react';
 import { channels } from '@/data/mockData';
 
 interface SlackSidebarProps {
   activeChannel: string;
   onChannelSelect: (id: string) => void;
-  onOpenGlobalCatchUp?: () => void;
-  isGlobalCatchUpActive?: boolean;
 }
 
-const SlackSidebar = ({ activeChannel, onChannelSelect, onOpenGlobalCatchUp, isGlobalCatchUpActive }: SlackSidebarProps) => {
+const SlackSidebar = ({ activeChannel, onChannelSelect }: SlackSidebarProps) => {
   return (
     <div className="w-[260px] bg-slack-sidebar flex flex-col h-full shrink-0">
       {/* Workspace header */}
@@ -28,18 +26,6 @@ const SlackSidebar = ({ activeChannel, onChannelSelect, onOpenGlobalCatchUp, isG
       <div className="px-2 py-3 space-y-0.5">
         <SidebarItem icon={<MessageSquare className="w-4 h-4" />} label="Threads" />
         <SidebarItem icon={<Bell className="w-4 h-4" />} label="Activity" badge={3} />
-        <button
-          onClick={onOpenGlobalCatchUp}
-          className={`w-full flex items-center gap-2 px-2 py-1 rounded-md text-[14px] transition-colors ${
-            isGlobalCatchUpActive
-              ? 'bg-slack-sidebar-hover text-slack-sidebar-active'
-              : 'text-slack-sidebar-text hover:bg-slack-sidebar-hover'
-          }`}
-        >
-          <Zap className="w-4 h-4" />
-          <span>Catch-Up</span>
-          <span className="ml-auto text-[11px] font-bold text-slack-sidebar-text opacity-70">8</span>
-        </button>
         <SidebarItem icon={<MoreHorizontal className="w-4 h-4" />} label="More" />
       </div>
 
