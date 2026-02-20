@@ -81,8 +81,21 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
             <ChevronDown className="w-3.5 h-3.5 text-foreground-secondary" />
           </div>
           <div className="flex items-center gap-1">
+            {/* Catch-Up pill button — left of People */}
+            <button
+              onClick={onOpenCatchUp}
+              className={`flex items-center gap-1.5 px-3 h-7 rounded-full text-[12px] font-semibold transition-all mr-1 ${
+                showCatchUp
+                  ? 'bg-primary/80 text-white'
+                  : 'bg-primary text-white hover:brightness-110 active:brightness-90'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Catch Up</span>
+            </button>
+
             {/* Avatar stack + People icon */}
-            <div className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-muted transition-colors cursor-pointer">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted transition-colors cursor-pointer">
               <AvatarStack />
               <Users className="w-4 h-4 text-foreground-secondary" />
             </div>
@@ -92,24 +105,6 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-foreground-secondary">
               <Search className="w-4 h-4" />
-            </button>
-            <div className="w-px h-4 bg-border mx-0.5" />
-            {/* Catch-Up toolbar button */}
-            <button
-              onClick={onOpenCatchUp}
-              className={`flex items-center gap-1.5 px-2.5 h-8 rounded-md text-[13px] font-medium transition-colors ${
-                showCatchUp
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-foreground-secondary hover:bg-muted hover:text-foreground'
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Catch Up</span>
-              {(channel?.unread ?? 0) > 0 && (
-                <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${showCatchUp ? 'bg-primary/30 text-primary' : 'bg-muted text-foreground-secondary'}`}>
-                  {channel?.unread}
-                </span>
-              )}
             </button>
           </div>
         </div>
