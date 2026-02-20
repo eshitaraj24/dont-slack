@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react';
 import type { Decision } from '@/data/mockData';
 
 interface KeyDecisionsProps {
@@ -10,28 +9,32 @@ const KeyDecisions = ({ decisions, onJumpToMessage }: KeyDecisionsProps) => {
   if (decisions.length === 0) return null;
 
   return (
-    <div className="px-4 py-3 border-t border-border-light">
-      <div className="flex items-center gap-2 mb-2.5">
-        <div className="w-1.5 h-1.5 rounded-full bg-decision-green" />
-        <h3 className="text-[13px] font-semibold text-foreground">Key Decisions</h3>
-      </div>
-      <div className="space-y-2">
-        {decisions.map(dec => (
-          <button
-            key={dec.id}
-            onClick={() => onJumpToMessage(dec.sourceMessageId)}
-            className="w-full text-left p-2.5 rounded-md bg-decision-green-bg hover:bg-decision-green/10 transition-colors group"
-          >
-            <p className="text-[13px] text-foreground leading-snug">{dec.text}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[11px] text-foreground-secondary">{dec.maker} · {dec.timestamp}</span>
-              <span className="text-[11px] text-decision-green opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
-                View <ArrowRight className="w-3 h-3" />
-              </span>
+    <div className="px-4 py-1">
+      {decisions.map((dec, i) => (
+        <button
+          key={dec.id}
+          onClick={() => onJumpToMessage(dec.sourceMessageId)}
+          className={`w-full text-left flex gap-2.5 py-2.5 hover:bg-muted/50 transition-colors rounded px-1 -mx-1 ${
+            i < decisions.length - 1 ? 'border-b border-border-light' : ''
+          }`}
+        >
+          <img
+            src={dec.makerAvatar}
+            alt={dec.maker}
+            className="w-8 h-8 rounded-full shrink-0 mt-0.5"
+          />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[13px] font-bold text-foreground">{dec.maker}</span>
+              <span className="text-[11px] text-foreground-secondary">{dec.timestamp}</span>
             </div>
-          </button>
-        ))}
-      </div>
+            <p className="text-[13px] text-foreground leading-snug mt-0.5">
+              <span className="text-foreground-secondary">Decision: </span>
+              {dec.text}
+            </p>
+          </div>
+        </button>
+      ))}
     </div>
   );
 };

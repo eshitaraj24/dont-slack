@@ -48,12 +48,10 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
 
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-5 py-3 relative">
-        {/* Catch-Up Pill — shown when channel has many unreads */}
         {channel && channel.unread >= 25 && !showCatchUp && (
           <CatchUpPill unreadCount={channel.unread} onClick={onOpenCatchUp} />
         )}
 
-        {/* Unread divider */}
         {channel && channel.unread > 0 && (
           <div className="flex items-center gap-3 my-4">
             <div className="flex-1 h-px bg-destructive/30" />
@@ -62,19 +60,20 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
           </div>
         )}
 
-        {/* Messages */}
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {messages.map(msg => (
             <div
               key={msg.id}
               ref={el => { messageRefs.current[msg.id] = el; }}
-              className={`flex gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-muted/50 group ${
+              className={`flex gap-2.5 px-2 py-1.5 rounded transition-colors hover:bg-muted/50 ${
                 flashId === msg.id ? 'message-highlight' : ''
               }`}
             >
-              <div className="w-9 h-9 rounded-lg bg-slack-sidebar-accent text-slack-sidebar-active text-[13px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                {msg.avatar}
-              </div>
+              <img
+                src={msg.avatar}
+                alt={msg.user}
+                className="w-9 h-9 rounded-md shrink-0 mt-0.5"
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
                   <span className="font-bold text-[15px] text-foreground">{msg.user}</span>
