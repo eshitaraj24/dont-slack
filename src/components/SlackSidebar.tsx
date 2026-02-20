@@ -12,7 +12,7 @@ const SlackSidebar = ({ activeChannel, onChannelSelect }: SlackSidebarProps) => 
       {/* Workspace header */}
       <div className="px-4 h-[49px] flex items-center justify-between border-b border-slack-sidebar-accent">
         <button className="flex items-center gap-1 text-slack-sidebar-active font-bold text-[17px] hover:opacity-80 transition-opacity">
-          Acme Inc
+          Nebula Labs
           <ChevronDown className="w-4 h-4 opacity-70" />
         </button>
         <div className="flex items-center gap-1">
