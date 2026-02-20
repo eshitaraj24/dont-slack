@@ -18,6 +18,10 @@ const Index = () => {
     setComposerText(prev => prev ? `${prev}\n${text}` : text);
   };
 
+  const handlePrefillComposer = (prefix: string) => {
+    setComposerText(prev => prev ? `${prev}\n${prefix}` : prefix);
+  };
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       <SlackSidebar activeChannel={activeChannel} onChannelSelect={(id) => { setActiveChannel(id); setShowCatchUp(false); }} />
@@ -34,6 +38,7 @@ const Index = () => {
           onClose={() => setShowCatchUp(false)}
           onJumpToMessage={handleJumpToMessage}
           onInsertReply={handleInsertReply}
+          onPrefillComposer={handlePrefillComposer}
         />
       )}
     </div>
