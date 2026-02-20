@@ -1,12 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import SlackSidebar from '@/components/SlackSidebar';
+import ChannelView from '@/components/ChannelView';
+import CatchUpPanel from '@/components/CatchUpPanel';
 
 const Index = () => {
+  const [activeChannel, setActiveChannel] = useState('2'); // product-launch (47 unread)
+  const [showCatchUp, setShowCatchUp] = useState(false);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+
+  const handleJumpToMessage = (messageId: string) => {
+    setHighlightedMessageId(messageId);
+    // Reset after animation
+    setTimeout(() => setHighlightedMessageId(null), 2500);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="flex h-screen w-screen overflow-hidden">
+      <SlackSidebar activeChannel={activeChannel} onChannelSelect={(id) => { setActiveChannel(id); setShowCatchUp(false); }} />
+      <ChannelView
+        channelId={activeChannel}
+        onOpenCatchUp={() => setShowCatchUp(true)}
+        showCatchUp={showCatchUp}
+        highlightedMessageId={highlightedMessageId}
+      />
+      {showCatchUp && (
+        <CatchUpPanel
+          onClose={() => setShowCatchUp(false)}
+          onJumpToMessage={handleJumpToMessage}
+        />
+      )}
     </div>
   );
 };
