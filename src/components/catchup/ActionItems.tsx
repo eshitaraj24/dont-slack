@@ -94,7 +94,7 @@ const ActionItems = ({ items, onConfirm, onJumpToMessage, onInsertReply }: Actio
                     {item.suggestedReplies.map((reply, i) => (
                       <button
                         key={i}
-                        onClick={() => { onInsertReply(reply); setExpandedReply(null); }}
+                        onClick={() => { onInsertReply(`${item.task} - ${reply}`); setExpandedReply(null); }}
                         className="text-[11px] px-2 py-1 rounded-full border border-border text-foreground-secondary hover:border-action-amber hover:text-action-amber transition-colors bg-card"
                       >
                         {reply}

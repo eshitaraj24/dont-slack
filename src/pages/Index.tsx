@@ -15,7 +15,7 @@ const Index = () => {
   };
 
   const handleInsertReply = (text: string) => {
-    setComposerText(text);
+    setComposerText(prev => prev ? `${prev}\n${text}` : text);
   };
 
   return (
