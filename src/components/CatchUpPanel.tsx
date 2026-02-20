@@ -18,9 +18,10 @@ interface CatchUpPanelProps {
   onClose: () => void;
   onJumpToMessage: (messageId: string) => void;
   onInsertReply: (text: string) => void;
+  onPrefillComposer: (prefix: string) => void;
 }
 
-const CatchUpPanel = ({ onClose, onJumpToMessage, onInsertReply }: CatchUpPanelProps) => {
+const CatchUpPanel = ({ onClose, onJumpToMessage, onInsertReply, onPrefillComposer }: CatchUpPanelProps) => {
   const [showConfidence, setShowConfidence] = useState(false);
   const [actions, setActions] = useState<ActionItem[]>(initialActionItems);
   const totalMessages = 47;
@@ -73,6 +74,7 @@ const CatchUpPanel = ({ onClose, onJumpToMessage, onInsertReply }: CatchUpPanelP
             onConfirm={handleConfirmAction}
             onJumpToMessage={onJumpToMessage}
             onInsertReply={onInsertReply}
+            onPrefillComposer={onPrefillComposer}
           />
 
           {/* Priority 4: Summary */}
