@@ -81,18 +81,22 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
             <ChevronDown className="w-3.5 h-3.5 text-foreground-secondary" />
           </div>
           <div className="flex items-center gap-1">
-            {/* Catch-Up pill button — left of People */}
-            <button
-              onClick={onOpenCatchUp}
-              className={`flex items-center gap-1.5 px-3 h-7 rounded-full text-[12px] font-semibold transition-all mr-1 ${
-                showCatchUp
-                  ? 'bg-primary/80 text-white'
-                  : 'bg-primary text-white hover:brightness-110 active:brightness-90'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Catch Up</span>
-            </button>
+            {/* Catch-Up pill — left of People, hidden when panel is open */}
+            {!showCatchUp && (
+              <button
+                onClick={onOpenCatchUp}
+                className="flex items-center gap-1.5 px-3 h-7 rounded-full text-[12px] font-semibold bg-primary text-white hover:brightness-110 active:brightness-90 transition-all mr-1 shrink-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Catch Up</span>
+                {(channel?.unread ?? 0) > 0 && (
+                  <>
+                    <span className="opacity-50 font-light">•</span>
+                    <span>{channel?.unread}</span>
+                  </>
+                )}
+              </button>
+            )}
 
             {/* Avatar stack + People icon */}
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted transition-colors cursor-pointer">
