@@ -1,5 +1,5 @@
 import { Hash, Search, Users, Bookmark, ChevronDown, Plus, Smile, Paperclip, Send, Sparkles, FileText, MessageSquare } from 'lucide-react';
-import { messages, channels, participants } from '@/data/mockData';
+import { channels, channelMessages, channelParticipants, channelUnreadStart } from '@/data/mockData';
 import type { SlackMessage } from '@/data/mockData';
 import { useRef, useEffect, useState } from 'react';
 import slackScreenshot from '@/assets/slack-screenshot.jpg';
@@ -22,8 +22,9 @@ const SlackAvatar = ({ initials, color, size = 36 }: { initials: string; color: 
   </div>
 );
 
-const AvatarStack = () => {
-  const stackParticipants = participants.slice(0, 4);
+const AvatarStack = ({ channelId }: { channelId: string }) => {
+  const channelParts = channelParticipants[channelId] ?? [];
+  const stackParticipants = channelParts.slice(0, 4);
   return (
     <div className="flex items-center -space-x-1.5">
       {stackParticipants.map((p, i) => (
@@ -43,14 +44,13 @@ const AvatarStack = () => {
         </div>
       ))}
       <span className="ml-2 text-[12px] text-foreground-secondary font-medium pl-0.5">
-        {participants.length}
+        {channelParts.length}
       </span>
     </div>
   );
 };
 
-// First "unread" message ID — divider renders just before this
-const UNREAD_START_ID = 'msg-28';
+// Unread start ID is now looked up per-channel from channelUnreadStart
 
 const MessageRow = ({ msg, flashId }: { msg: SlackMessage; flashId: string | null }) => (
   <div className={`flex gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-muted/50 group ${flashId === msg.id ? 'message-highlight' : ''}`}>
@@ -122,6 +122,8 @@ const MessageRow = ({ msg, flashId }: { msg: SlackMessage; flashId: string | nul
 
 const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessageId, composerText, onComposerChange }: ChannelViewProps) => {
   const channel = channels.find(c => c.id === channelId);
+  const msgs = channelMessages[channelId] ?? [];
+  const unreadStartId = channelUnreadStart[channelId] ?? null;
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [flashId, setFlashId] = useState<string | null>(null);
 
@@ -134,7 +136,7 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
     }
   }, [highlightedMessageId]);
 
-  const unreadIndex = messages.findIndex(m => m.id === UNREAD_START_ID);
+  const unreadIndex = unreadStartId ? msgs.findIndex(m => m.id === unreadStartId) : -1;
 
   return (
     <div className="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
@@ -174,7 +176,7 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
 
             {/* Avatar stack + People icon */}
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted transition-colors cursor-pointer">
-              <AvatarStack />
+              <AvatarStack channelId={channelId} />
               <Users className="w-4 h-4 text-foreground-secondary" />
             </div>
             <div className="w-px h-4 bg-border mx-0.5" />
@@ -190,7 +192,7 @@ const ChannelView = ({ channelId, onOpenCatchUp, showCatchUp, highlightedMessage
         {/* Messages area */}
         <div className="flex-1 overflow-y-auto px-5 py-3 relative">
           <div className="space-y-1">
-            {messages.map((msg, idx) => (
+            {msgs.map((msg, idx) => (
               <div key={msg.id} ref={el => { messageRefs.current[msg.id] = el; }}>
                 {/* Unread divider */}
                 {idx === unreadIndex && (
