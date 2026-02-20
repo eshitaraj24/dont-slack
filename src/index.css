@@ -2,95 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Slack-native Design System — Catch-Up Mode */
+/* All colors in HSL */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Slack Aubergine Sidebar */
+    --sidebar-bg: 289 55% 19%;
+    --sidebar-bg-hover: 289 45% 24%;
+    --sidebar-text: 300 10% 80%;
+    --sidebar-text-active: 0 0% 100%;
+    --sidebar-accent: 289 40% 30%;
+    --sidebar-badge: 0 72% 51%;
 
+    /* Content Area */
+    --background: 0 0% 100%;
+    --foreground: 300 3% 11%;
+    --foreground-secondary: 300 2% 38%;
+
+    /* Cards & Surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 300 3% 11%;
+    --card-elevated: 0 0% 98%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 300 3% 11%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Slack Blue — links, primary actions */
+    --primary: 209 83% 36%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 300 3% 11%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted */
+    --muted: 0 0% 96%;
+    --muted-foreground: 300 2% 38%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent */
+    --accent: 0 0% 96%;
+    --accent-foreground: 300 3% 11%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Slack section colors */
+    --impact-blue: 209 83% 36%;
+    --impact-blue-bg: 209 83% 96%;
+    --decision-green: 162 100% 24%;
+    --decision-green-bg: 162 50% 95%;
+    --action-amber: 30 80% 55%;
+    --action-amber-bg: 38 80% 95%;
+    --summary-purple: 270 50% 50%;
+    --summary-purple-bg: 270 40% 96%;
+    --participant-gray: 0 0% 60%;
+    --participant-gray-bg: 0 0% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Mention highlight */
+    --mention-bg: 45 100% 90%;
+    --mention-border: 45 90% 70%;
 
-    --radius: 0.5rem;
+    /* Destructive */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --sidebar-background: 0 0% 98%;
+    /* Borders */
+    --border: 0 0% 87%;
+    --border-light: 0 0% 92%;
+    --input: 0 0% 87%;
+    --ring: 209 83% 36%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --radius: 0.375rem;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar (shadcn) */
+    --sidebar-background: 289 55% 19%;
+    --sidebar-foreground: 300 10% 80%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 289 55% 19%;
+    --sidebar-accent: 289 40% 30%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 289 40% 25%;
+    --sidebar-ring: 209 83% 36%;
   }
 }
 
@@ -101,5 +91,38 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* Catch-Up Pill animation */
+@keyframes catch-up-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.catch-up-pill-pulse {
+  animation: catch-up-pulse 2.5s ease-in-out infinite;
+}
+
+/* Smooth panel slide */
+@keyframes panel-slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.panel-slide-in {
+  animation: panel-slide-in 0.2s ease-out;
+}
+
+/* Subtle highlight flash for jump-to-message */
+@keyframes highlight-flash {
+  0% { background-color: hsl(45 100% 90%); }
+  100% { background-color: transparent; }
+}
+
+.message-highlight {
+  animation: highlight-flash 2s ease-out;
 }

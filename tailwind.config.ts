@@ -15,10 +15,12 @@ export default {
     extend: {
       colors: {
         border: "hsl(var(--border))",
+        "border-light": "hsl(var(--border-light))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "foreground-secondary": "hsl(var(--foreground-secondary))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -46,7 +48,29 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          elevated: "hsl(var(--card-elevated))",
         },
+        // Slack sidebar
+        "slack-sidebar": "hsl(var(--sidebar-bg))",
+        "slack-sidebar-hover": "hsl(var(--sidebar-bg-hover))",
+        "slack-sidebar-text": "hsl(var(--sidebar-text))",
+        "slack-sidebar-active": "hsl(var(--sidebar-text-active))",
+        "slack-sidebar-accent": "hsl(var(--sidebar-accent))",
+        "slack-sidebar-badge": "hsl(var(--sidebar-badge))",
+        // Section colors
+        "impact-blue": "hsl(var(--impact-blue))",
+        "impact-blue-bg": "hsl(var(--impact-blue-bg))",
+        "decision-green": "hsl(var(--decision-green))",
+        "decision-green-bg": "hsl(var(--decision-green-bg))",
+        "action-amber": "hsl(var(--action-amber))",
+        "action-amber-bg": "hsl(var(--action-amber-bg))",
+        "summary-purple": "hsl(var(--summary-purple))",
+        "summary-purple-bg": "hsl(var(--summary-purple-bg))",
+        "participant-gray": "hsl(var(--participant-gray))",
+        "participant-gray-bg": "hsl(var(--participant-gray-bg))",
+        // Mention
+        "mention-bg": "hsl(var(--mention-bg))",
+        "mention-border": "hsl(var(--mention-border))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -65,20 +89,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
